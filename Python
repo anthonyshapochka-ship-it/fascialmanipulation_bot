@@ -1,0 +1,83 @@
+import asyncio
+import logging
+from aiogram import Bot, Dispatcher, types, F
+from aiogram.filters import Command
+from aiogram.types import WebAppInfo, MenuButtonWebApp
+from aiogram.enums import ParseMode
+
+# Конфигурация
+BOT_TOKEN = "ВАШ_ТОКЕН_ОТ_@BotFather"
+WEBAPP_URL = "https://ваш-домен.com/webapp"  # или ngrok для теста
+
+logging.basicConfig(level=logging.INFO)
+bot = Bot(token=BOT_TOKEN)
+dp = Dispatcher()
+
+@dp.message(Command("start"))
+async def cmd_start(message: types.Message):
+    """Главное меню с кнопкой Mini App"""
+    
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=[
+        [types.InlineKeyboardButton(
+            text="🧠 Открыть Mindmap FM",
+            web_app=WebAppInfo(url=WEBAPP_URL)
+        )],
+        [types.InlineKeyboardButton(
+            text="📚 О методе Stecco", 
+            callback_data="about"
+        )],
+        [types.InlineKeyboardButton(
+            text="❓ Помощь", 
+            callback_data="help"
+        )]
+    ])
+    
+    await message.answer(
+        "🎯 <b>Фасциальные Манипуляции</b>\n\n"
+        "Интерактивная карта уровней лечения по методу Luigi Stecco.\n\n"
+        "Нажмите кнопку ниже для запуска приложения:",
+        parse_mode=ParseMode.HTML,
+        reply_markup=keyboard
+    )
+
+@dp.callback_query(F.data == "about")
+async def about_callback(callback: types.CallbackQuery):
+    await callback.message.edit_text(
+        "📖 <b>Метод Stecco</b>\n\n"
+        "Фасциальная манипуляция — это методика лечения, "
+        "разработанная Luigi Stecco, физиотерапевтом из Италии.\n\n"
+        "<b>4 уровня лечения:</b>\n"
+        "• I-II: Двигательный аппарат\n"
+        "• III: Теноструктуры и цепочки\n"
+        "• IV: Системы (поверхностная фасция)\n\n"
+        "Более подробно в интерактивной карте ⬇️",
+        parse_mode=ParseMode.HTML,
+        reply_markup=types.InlineKeyboardMarkup(inline_keyboard=[
+            [types.InlineKeyboardButton(
+                text="🧠 Открыть Mindmap", 
+                web_app=WebAppInfo(url=WEBAPP_URL)
+            )]
+        ])
+    )
+
+@dp.callback_query(F.data == "help")
+async def help_callback(callback: types.CallbackQuery):
+    await callback.answer(
+        "Используйте /start для главного меню. "
+        "Нажмите '🧠 Открыть Mindmap FM' для интерактивной карты.",
+        show_alert=True
+    )
+
+async def main():
+    # Установка кнопки меню
+    await bot.set_chat_menu_button(
+        menu_button=MenuButtonWebApp(
+            text="Mindmap FM",
+            web_app=WebAppInfo(url=WEBAPP_URL)
+        )
+    )
+    
+    await dp.start_polling(bot)
+
+if __name__ == "__main__":
+    asyncio.run(main())
