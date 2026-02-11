@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FM Mindmap</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--tg-theme-bg-color, #0f172a);
+            color: var(--tg-theme-text-color, #ffffff);
+            margin: 0;
+            overflow: hidden;
+            touch-action: none;
+        }
+        
+        #tree-container {
+            width: 100vw;
+            height: 100vh;
+            cursor: grab;
+        }
+        
+        #tree-container:active {
+            cursor: grabbing;
+        }
+        
+        .node circle {
+            fill: #fff;
+            stroke-width: 3px;
+            transition: all 0.3s;
+        }
+        
+        .node text {
+            font-size: 12px;
+            font-weight: 500;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            pointer-events: none;
+        }
+        
+        .link {
+            fill: none;
+            stroke-opacity: 0.6;
+            stroke-width: 2px;
+        }
+        
+        .tg-button {
+            background: var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .tg-button:active {
+            opacity: 0.8;
+        }
+        
+        .panel {
+            background: var(--tg-theme-secondary-bg-color, rgba(30, 41, 59, 0.95));
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхняя панель -->
+    <div class="fixed top-0 left-0 right-0 z-50 p-2 flex justify-between items-center panel mx-2 mt-2">
+        <div class="text-sm font-bold">🧠 FM Mindmap</div>
+        <div class="flex gap-2">
+            <button class="tg-button text-xs" onclick="expandAll()">+ Все</button>
+            <button class="tg-button text-xs" onclick="collapseAll()">- Свернуть</button>
+            <button class="tg-button text-xs" onclick="resetView()">⌂</button>
+        </div>
+    </div>
+
+    <!-- Контейнер для дерева -->
+    <div id="tree-container"></div>
+
+    <!-- Нижняя панель с легендой -->
+    <div class="fixed bottom-0 left-0 right-0 z-50 p-2">
+        <div class="panel">
+            <div class="text-xs font-bold mb-2 text-center">Уровни</div>
+            <div class="flex justify-around text-xs">
+                <div class="flex items-center gap-1" onclick="highlightLevel('level1')">
+                    <div class="w-3 h-3 rounded-full bg-cyan-400"></div>
+                    <span>I-II</span>
+                </div>
+                <div class="flex items-center gap-1" onclick="highlightLevel('level3')">
+                    <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+                    <span>III</span>
+                </div>
+                <div class="flex items-center gap-1" onclick="highlightLevel('level4')">
+                    <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                    <span>IV</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Инициализация Telegram WebApp
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+
+        // Данные
+        const treeData = {
+            name: "Фасциальные Манипуляции",
+            type: "root",
+            children: [
+                {
+                    name: "Уровень I-II",
+                    type: "level1",
+                    color: "#22d3ee",
+                    children: [
+                        { name: "Последовательности", type: "level1" },
+                        { name: "Диагонали", type: "level1" },
+                        { name: "Спирали", type: "level1" }
+                    ]
+                },
+                {
+                    name: "Уровень III",
+                    type: "level3",
+                    color: "#f97316",
+                    children: [
+                        {
+                            name: "Натяжные конструкции",
+                            type: "level3",
+                            children: [
+                                { name: "CP - Шейный", type: "level3" },
+                                { name: "CL - Ключичный", type: "level3" },
+                                { name: "TH - Грудной", type: "level3" },
+                                { name: "LU - Поясничный", type: "level3" },
+                                { name: "PV - Тазовый", type: "level3" }
+                            ]
+                        },
+                        {
+                            name: "Рецепторный (SE RE)",
+                            type: "receptorial",
+                            color: "#a855f7",
+                            children: [
+                                { name: "Фоторецепция", type: "receptorial" },
+                                { name: "Хеморецепция", type: "receptorial" },
+                                { name: "Механорецепция", type: "receptorial" }
+                            ]
+                        },
+                        {
+                            name: "Висцеральный (SE VI)",
+                            type: "visceral",
+                            color: "#ef4444",
+                            children: [
+                                { name: "Дыхательная ARE", type: "visceral" },
+                                { name: "Пищеварительная ADI", type: "visceral" }
+                            ]
+                        },
+                        {
+                            name: "Железистый (SE GL)",
+                            type: "glandular",
+                            color: "#eab308",
+                            children: [
+                                { name: "Эндокринная AEN", type: "glandular" },
+                                { name: "Кроветворная AHE", type: "glandular" }
+                            ]
+                        },
+                        {
+                            name: "Сосудистый (SE VA)",
+                            type: "vascular",
+                            color: "#22c55e",
+                            children: [
+                                { name: "Кровообращение ACI", type: "vascular" },
+                                { name: "Мочевыделительная AUN", type: "vascular" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Уровень IV",
+                    type: "level4",
+                    color: "#10b981",
+                    children: [
+                        {
+                            name: "Кожная (STC)",
+                            type: "level4",
+                            children: [
+                                { name: "Кожная", type: "level4" },
+                                { name: "Терморегуляционная", type: "level4" }
+                            ]
+                        },
+                        {
+                            name: "Лимфатическая (SLI)",
+                            type: "level4",
+                            children: [
+                                { name: "Лимфатическая", type: "level4" },
+                                { name: "Имунная", type: "level4" }
+                            ]
+                        },
+                        {
+                            name: "Жировая (SAM)",
+                            type: "level4",
+                            children: [
+                                { name: "Жировая", type: "level4" },
+                                { name: "Метаболическая", type: "level4" }
+                            ]
+                        },
+                        {
+                            name: "Психогенная (SPS)",
+                            type: "level4",
+                            children: [
+                                { name: "Нейрогенная", type: "level4" },
+                                { name: "Психогенная", type: "level4" }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        const colors = {
+            root: "#ffffff",
+            level1: "#22d3ee",
+            level3: "#f97316",
+            level4: "#10b981",
+            receptorial: "#a855f7",
+            visceral: "#ef4444",
+            glandular: "#eab308",
+            vascular: "#22c55e"
+        };
+
+        let svg, g, tree, root, i = 0;
+        const duration = 750;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        function init() {
+            d3.select("#tree-container").html("");
+            
+            svg = d3.select("#tree-container").append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .call(d3.zoom().on("zoom", (e) => g.attr("transform", e.transform)))
+                .append("g");
+            
+            g = svg.append("g").attr("transform", `translate(${width/6},${height/2})`);
+            tree = d3.tree().nodeSize([45, 160]);
+            
+            root = d3.hierarchy(treeData, d => d.children);
+            root.x0 = 0;
+            root.y0 = 0;
+            
+            // Свернуть для мобильного вида
+            if(root.children) {
+                root.children.forEach((child, idx) => {
+                    if(child.children) {
+                        child.children.forEach(c => {
+                            if(c.children) collapse(c);
+                        });
+                    }
+                });
+            }
+            
+            update(root);
+        }
+
+        function collapse(d) {
+            if(d.children) {
+                d._children = d.children;
+                d._children.forEach(collapse);
+                d.children = null;
+            }
+        }
+
+        function expand(d) {
+            if(d._children) {
+                d.children = d._children;
+                d._children = null;
+            }
+        }
+
+        function update(source) {
+            const treeData = tree(root);
+            const nodes = treeData.descendants();
+            const links = treeData.links();
+            
+            nodes.forEach(d => d.y = d.depth * 140);
+            
+            const node = g.selectAll('g.node').data(nodes, d => d.id || (d.id = ++i));
+            
+            const nodeEnter = node.enter().append('g')
+                .attr('class', 'node')
+                .attr("transform", d => `translate(${source.y0},${source.x0})`)
+                .on('click', (e, d) => {
+                    if(d.children) {
+                        d._children = d.children;
+                        d.children = null;
+                    } else {
+                        d.children = d._children;
+                        d._children = null;
+                    }
+                    update(d);
+                    
+                    // Haptic feedback для Telegram
+                    if(tg.HapticFeedback) {
+                        tg.HapticFeedback.impactOccurred('light');
+                    }
+                });
+            
+            nodeEnter.append('circle')
+                .attr('r', 1e-6)
+                .style("fill", d => d._children ? colors[d.data.type] : "#0f172a")
+                .style("stroke", d => colors[d.data.type]);
+            
+            nodeEnter.append('text')
+                .attr("dy", ".35em")
+                .attr("x", d => d.children || d._children ? -12 : 12)
+                .attr("text-anchor", d => d.children || d._children ? "end" : "start")
+                .text(d => d.data.name)
+                .style("fill", d => colors[d.data.type])
+                .style("font-size", d => d.depth === 0 ? "14px" : "11px");
+            
+            const nodeUpdate = node.merge(nodeEnter);
+            
+            nodeUpdate.transition().duration(duration)
+                .attr("transform", d => `translate(${d.y},${d.x})`);
+            
+            nodeUpdate.select('circle')
+                .attr('r', d => d.depth === 0 ? 10 : d._children ? 7 : 5)
+                .style("fill", d => d._children ? colors[d.data.type] : "#0f172a");
+            
+            const nodeExit = node.exit().transition().duration(duration)
+                .attr("transform", d => `translate(${source.y},${source.x})`)
+                .remove();
+            
+            nodeExit.select('circle').attr('r', 1e-6);
+            
+            const link = g.selectAll('path.link').data(links, d => d.target.id);
+            
+            const linkEnter = link.enter().insert('path', "g")
+                .attr("class", "link")
+                .attr('d', d => {
+                    const o = {x: source.x0, y: source.y0};
+                    return diagonal(o, o);
+                })
+                .style("stroke", d => colors[d.target.data.type] || "#64748b");
+            
+            const linkUpdate = link.merge(linkEnter);
+            
+            linkUpdate.transition().duration(duration)
+                .attr('d', d => diagonal(d.source, d.target));
+            
+            link.exit().transition().duration(duration)
+                .attr('d', d => {
+                    const o = {x: source.x, y: source.y};
+                    return diagonal(o, o);
+                })
+                .remove();
+            
+            nodes.forEach(d => {
+                d.x0 = d.x;
+                d.y0 = d.y;
+            });
+        }
+
+        function diagonal(s, d) {
+            return `M ${s.y} ${s.x} C ${(s.y + d.y) / 2} ${s.x}, ${(s.y + d.y) / 2} ${d.x}, ${d.y} ${d.x}`;
+        }
+
+        function expandAll() {
+            expand(root);
+            update(root);
+            tg.HapticFeedback?.impactOccurred('medium');
+        }
+
+        function collapseAll() {
+            root.children.forEach(collapse);
+            update(root);
+            tg.HapticFeedback?.impactOccurred('medium');
+        }
+
+        function resetView() {
+            svg.transition().duration(750).call(
+                d3.zoom().transform,
+                d3.zoomIdentity.translate(width/6, height/2).scale(1)
+            );
+        }
+
+        function highlightLevel(levelType) {
+            d3.selectAll('.link').style("stroke-opacity", 0.2);
+            d3.selectAll('.link')
+                .filter(d => d.target.data.type === levelType || 
+                    (levelType === 'level3' && ['receptorial','visceral','glandular','vascular'].includes(d.target.data.type)))
+                .style("stroke-opacity", 1)
+                .style("stroke-width", 3);
+            
+            setTimeout(() => {
+                d3.selectAll('.link').style("stroke-opacity", 0.6).style("stroke-width", 2);
+            }, 2000);
+            
+            tg.HapticFeedback?.selectionChanged();
+        }
+
+        window.addEventListener('load', init);
+        window.addEventListener('resize', () => location.reload());
+    </script>
+</body>
+</html>
