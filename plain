@@ -1,0 +1,8 @@
+fascial-mindmap-bot/
+├── bot.py                 # Основной бот
+├── requirements.txt       # Зависимости
+├── webapp/               # Mini App (веб-приложение)
+│   ├── index.html        # Главная страница (mindmap)
+│   ├── app.js           # Логика
+│   └── style.css        # Стили
+└── config.py            # Конфигурация
