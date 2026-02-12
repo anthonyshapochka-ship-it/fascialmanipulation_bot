@@ -31,14 +31,14 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            text-shadow: 0 2px 8px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.8);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9);
             pointer-events: none;
         }
         
         .link {
             fill: none;
             stroke-opacity: 0.4;
-            stroke-width: 1.5px;
+            stroke-width: 2px;
             transition: all 0.5s ease;
         }
         
@@ -48,41 +48,16 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
         
-        .level-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 6px 14px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 800;
+        .control-btn {
+            transition: all 0.2s;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            font-weight: 600;
         }
         
-        @keyframes pulse-glow {
-            0%, 100% { opacity: 1; filter: brightness(1); }
-            50% { opacity: 0.8; filter: brightness(1.2); }
-        }
-        
-        .pulse {
-            animation: pulse-glow 2s infinite;
-        }
-        
-        .tooltip {
-            position: absolute;
-            padding: 16px 20px;
-            background: rgba(0, 0, 0, 0.95);
-            color: white;
-            border-radius: 8px;
-            font-size: 12px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-            max-width: 350px;
-            z-index: 1000;
-            border: 1px solid rgba(255,255,255,0.15);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-            line-height: 1.6;
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         
         #tree-container {
@@ -95,33 +70,62 @@
             cursor: grabbing;
         }
         
-        .control-btn {
-            transition: all 0.2s;
+        .tooltip {
+            position: absolute;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.95);
+            color: #e5e5e5;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 380px;
+            z-index: 1000;
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+        }
+        
+        .tooltip strong {
+            color: #fff;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 8px;
             text-transform: uppercase;
-            font-size: 11px;
-            font-weight: 700;
             letter-spacing: 0.5px;
         }
         
-        .control-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        .symptom-list {
+            margin-top: 8px;
+            padding-left: 0;
+            list-style: none;
         }
         
-        .legend-item {
-            transition: all 0.3s;
-            cursor: pointer;
+        .symptom-list li {
+            padding: 3px 0;
+            padding-left: 16px;
+            position: relative;
         }
         
-        .legend-item:hover {
-            transform: translateX(8px);
-            background: rgba(255,255,255,0.05);
+        .symptom-list li:before {
+            content: "›";
+            position: absolute;
+            left: 0;
+            color: #666;
+            font-weight: bold;
         }
         
-        .symptom-box {
-            border-left: 3px solid;
-            padding-left: 12px;
-            margin: 8px 0;
+        .category-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+            margin-right: 6px;
         }
     </style>
 </head>
@@ -131,90 +135,39 @@
     <div class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-zinc-800">
         <div class="px-6 py-4 flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-zinc-900 border border-zinc-700 rounded-lg flex items-center justify-center text-lg font-black tracking-wider">
+                <div class="w-12 h-12 bg-gradient-to-br from-zinc-700 to-zinc-900 rounded-lg flex items-center justify-center text-lg font-bold border border-zinc-600">
                     FM
                 </div>
                 <div>
-                    <h1 class="text-lg font-black tracking-wider text-white">
+                    <h1 class="text-lg font-bold tracking-wider text-zinc-100">
                         ЛОГИКА ФАСЦИАЛЬНЫХ МАНИПУЛЯЦИЙ
                     </h1>
-                    <p class="text-xs text-zinc-500 font-bold tracking-widest uppercase">Метод Стечко | Stecco Method</p>
+                    <p class="text-xs text-zinc-500 tracking-widest uppercase">Stecco Method • Полная Структурная Карта</p>
                 </div>
             </div>
             
             <div class="flex items-center gap-3">
-                <button onclick="expandAll()" class="control-btn px-5 py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded text-zinc-300">
-                    РАЗВЕРНУТЬ ВСЁ
+                <button onclick="expandAll()" class="control-btn px-5 py-2.5 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-xs border border-zinc-700">
+                    Развернуть Всё
                 </button>
-                <button onclick="collapseAll()" class="control-btn px-5 py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded text-zinc-300">
-                    СВЕРНУТЬ
+                <button onclick="collapseAll()" class="control-btn px-5 py-2.5 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-xs border border-zinc-700">
+                    Свернуть
                 </button>
-                <button onclick="resetView()" class="control-btn px-5 py-2.5 bg-white text-black hover:bg-zinc-200 rounded font-black">
-                    СБРОС
+                <button onclick="resetView()" class="control-btn px-5 py-2.5 bg-zinc-100 text-black hover:bg-zinc-200 rounded-lg text-xs">
+                    Сбросить Вид
                 </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Legend -->
-    <div class="fixed top-24 left-6 z-40 glass-panel rounded-lg p-5 space-y-2 w-72">
-        <h3 class="text-xs font-black text-zinc-400 mb-4 uppercase tracking-widest">Уровни Терапии</h3>
-        
-        <div class="legend-item flex items-center gap-3 p-2 rounded" onclick="highlightLevel('level1')">
-            <div class="w-3 h-3 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/30"></div>
-            <div>
-                <div class="text-xs font-black text-cyan-400">УРОВЕНЬ I-II</div>
-                <div class="text-[10px] text-zinc-500 font-bold uppercase">Локомоторный Аппарат</div>
-            </div>
-        </div>
-        
-        <div class="legend-item flex items-center gap-3 p-2 rounded" onclick="highlightLevel('level3')">
-            <div class="w-3 h-3 rounded-full bg-orange-500 shadow-lg shadow-orange-500/30"></div>
-            <div>
-                <div class="text-xs font-black text-orange-500">УРОВЕНЬ III</div>
-                <div class="text-[10px] text-zinc-500 font-bold uppercase">Натяжные Структуры</div>
-            </div>
-        </div>
-        
-        <div class="legend-item flex items-center gap-3 p-2 rounded" onclick="highlightLevel('level4')">
-            <div class="w-3 h-3 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/30"></div>
-            <div>
-                <div class="text-xs font-black text-emerald-500">УРОВЕНЬ IV</div>
-                <div class="text-[10px] text-zinc-500 font-bold uppercase">Системные Дисфункции</div>
-            </div>
-        </div>
-
-        <div class="mt-4 pt-4 border-t border-zinc-800">
-            <div class="text-[10px] text-zinc-600 font-bold mb-3 uppercase tracking-wider">Последовательности:</div>
-            <div class="space-y-1">
-                <div class="flex items-center gap-2 text-[10px] font-bold text-purple-400">
-                    <div class="w-2 h-2 rounded-full bg-purple-500"></div>
-                    РЕЦЕПТОРНЫЙ АППАРАТ
-                </div>
-                <div class="flex items-center gap-2 text-[10px] font-bold text-red-400">
-                    <div class="w-2 h-2 rounded-full bg-red-500"></div>
-                    ВИСЦЕРАЛЬНАЯ ЦЕПОЧКА (SE VI)
-                </div>
-                <div class="flex items-center gap-2 text-[10px] font-bold text-yellow-400">
-                    <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
-                    ЖЕЛЕЗИСТАЯ ЦЕПОЧКА (SE GL)
-                </div>
-                <div class="flex items-center gap-2 text-[10px] font-bold text-green-400">
-                    <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                    СОСУДИСТАЯ ЦЕПОЧКА (SE VA)
-                </div>
             </div>
         </div>
     </div>
 
     <!-- Info Panel -->
-    <div id="infoPanel" class="fixed top-24 right-6 z-40 glass-panel rounded-lg p-6 w-96 transform translate-x-full transition-transform duration-300 max-h-[80vh] overflow-y-auto">
+    <div id="infoPanel" class="fixed top-24 right-6 z-40 glass-panel rounded-xl p-6 w-96 transform translate-x-full transition-transform duration-300 max-h-[80vh] overflow-y-auto">
         <button onclick="closeInfo()" class="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
-        <h3 id="infoTitle" class="text-base font-black mb-3 tracking-wider uppercase"></h3>
+        <h3 id="infoTitle" class="text-xl font-bold mb-3 text-white tracking-wide"></h3>
         <div id="infoLevel" class="mb-4"></div>
-        <div id="infoDesc" class="text-xs text-zinc-400 leading-relaxed space-y-3"></div>
+        <div id="infoContent" class="space-y-4 text-sm text-zinc-300"></div>
     </div>
 
     <!-- Main Visualization -->
@@ -227,32 +180,32 @@
         const treeData = {
             name: "ФАСЦИАЛЬНЫЕ МАНИПУЛЯЦИИ",
             type: "root",
-            description: "КОМПЛЕКСНЫЙ ПОДХОД К ЛЕЧЕНИЮ ДИСФУНКЦИЙ ФАСЦИАЛЬНОЙ СИСТЕМЫ ПО МЕТОДУ СТЕЧКО",
+            description: "Комплексный подход к лечению дисфункций фасциальной системы по методу Stecco",
             children: [
                 {
                     name: "ЛОКОМОТОРНАЯ ДИСФУНКЦИЯ (М-С ПРОБЛЕМА)",
                     type: "level1",
                     level: "I-II",
-                    color: "#22d3ee",
-                    description: "ДВИГАТЕЛЬНЫЕ ДИСФУНКЦИИ УРОВНЯ I И II - РАБОТА С ОПОРНО-ДВИГАТЕЛЬНЫМ АППАРАТОМ, МЫШЕЧНО-СКЕЛЕТНЫЕ ПРОБЛЕМЫ",
+                    color: "#06b6d4",
+                    description: "Двигательные дисфункции уровня I и II - работа с опорно-двигательным аппаратом",
                     children: [
                         {
                             name: "ПОСЛЕДОВАТЕЛЬНОСТИ",
                             type: "level1",
-                            color: "#22d3ee",
-                            description: "ЛИНЕЙНЫЕ ЦЕПОЧКИ ДИСФУНКЦИЙ В ОДНОЙ ПЛОСКОСТИ"
+                            color: "#06b6d4",
+                            description: "Линейные цепочки дисфункций в одной плоскости"
                         },
                         {
                             name: "ДИАГОНАЛИ",
                             type: "level1",
-                            color: "#22d3ee",
-                            description: "ПЕРЕКРЕСТНЫЕ ПАТТЕРНЫ ДИСФУНКЦИЙ"
+                            color: "#06b6d4",
+                            description: "Перекрестные паттерны дисфункций"
                         },
                         {
                             name: "СПИРАЛИ",
                             type: "level1",
-                            color: "#22d3ee",
-                            description: "ТРЕХМЕРНЫЕ СПИРАЛЬНЫЕ КОМПЕНСАЦИИ"
+                            color: "#06b6d4",
+                            description: "Трехмерные спиральные компенсации"
                         }
                     ]
                 },
@@ -261,75 +214,106 @@
                     type: "level3",
                     level: "III",
                     color: "#f97316",
-                    description: "ГЛОБАЛЬНЫЕ ДИСФУНКЦИИ УРОВНЯ III - РАБОТА С НАТЯЖНЫМИ КОНСТРУКЦИЯМИ И ВНУТРЕННИМИ АППАРАТАМИ",
+                    description: "Глобальные дисфункции уровня III - работа с теноструктурами и аппаратами",
                     children: [
                         {
                             name: "НАТЯЖНЫЕ КОНСТРУКЦИИ",
                             type: "level3",
                             color: "#f97316",
-                            description: "TENOSTRUCTURES (CP, CL, TH, LU, PV) - ЕДИНИЦЫ ОБЪЕМА ДВИЖЕНИЯ (UOF)",
+                            description: "Единицы объема движения (uof) - CP, CL, TH, LU, PV",
                             children: [
-                                { 
-                                    name: "CP - ГОЛОВА", 
-                                    type: "level3", 
+                                {
+                                    name: "CP - ГОЛОВА",
+                                    type: "level3",
                                     color: "#f97316",
-                                    description: "ЦЕРВИКАЛЬНАЯ НАТЯЖНАЯ КОНСТРУКЦИЯ",
-                                    symptoms: "ОЩУЩЕНИЕ ТЯЖЕЛОЙ, ПОЛНОЙ ИЛИ МУТНОЙ ГОЛОВЫ, СТРЕЛЯЮЩАЯ БОЛЬ В ВИСКЕ, НЕЧЕТКОЕ ЗРЕНИЕ, ГИПАКУЗИЯ",
-                                    tension: "НАПРЯЖЕНИЕ В ЛИЦЕ, СПАЗМЫ ВЕК, НЕРВНЫЕ ТИКИ",
-                                    anchoring: "ЧЕРЕПНАЯ, ВИСОЧНАЯ, ВЫЙНАЯ БОЛЬ"
+                                    fullInfo: true,
+                                    symptom: "Ощущение тяжелой, полной или мутной головы, стреляющая боль в виске, нечеткое зрение, гипакузия, и т.д.",
+                                    tension: "Напряжение в лице, спазмы век, нервные тики",
+                                    anchoring: "Черепная, височная, выйная боль",
+                                    visceral: ["Блефароспазм", "Конъюнктивит", "Диплопия", "Косоглазие"],
+                                    vascular: ["Звон в ушах", "Отит среднего уха", "Головокружение", "Болезнь Меньера"],
+                                    glandular: ["Гипосаливация", "Стоматит", "Ринит", "Синусит"]
                                 },
-                                { 
-                                    name: "CL - ШЕЙНЫЙ", 
-                                    type: "level3", 
+                                {
+                                    name: "CL - ШЕЙНЫЙ",
+                                    type: "level3",
                                     color: "#f97316",
-                                    description: "КЛАВИКУЛЯРНАЯ НАТЯЖНАЯ КОНСТРУКЦИЯ",
-                                    symptoms: "ОЩУЩЕНИЕ КОМА В ГОРЛЕ, СЛОЖНОСТИ С ГЛОТАНИЕМ, ОХРИПЛОСТЬ, СИПЛОСТЬ, ПОТРЕБНОСТЬ ЧАСТО ПРОЧИЩАТЬ ГОРЛО",
-                                    tension: "ОЩУЩЕНИЕ ЗАКРЫТОСТИ, ОГРАНИЧЕННОСТИ, КОМА В ГОРЛЕ",
-                                    anchoring: "ВЫЙНАЯ, ПОЗВОНОЧНАЯ, ШЕЙНАЯ БОЛЬ"
+                                    fullInfo: true,
+                                    symptom: "Ощущение кома в горле, сложности с глотанием, охриплость, сиплость, потребность часто прочищать горло, и т.д.",
+                                    tension: "Ощущение закрытости, ограниченности, кома в горле, ощущение…",
+                                    anchoring: "Выйная, позвоночная, шейная боль, боль…",
+                                    visceral: ["Дисфагия", "Дисфония", "Ларингит", "Фарингит"],
+                                    vascular: ["Лицевой отек", "Стеноз сонной артерии", "Проблемы кровообращения"],
+                                    glandular: ["Тимит", "Перикардит", "Проблемы диафрагмы", "Сердцебиения"]
                                 },
-                                { 
-                                    name: "TH - ГРУДНОЙ", 
-                                    type: "level3", 
+                                {
+                                    name: "TH - ГРУДНОЙ",
+                                    type: "level3",
                                     color: "#f97316",
-                                    description: "ТОРАКАЛЬНАЯ НАТЯЖНАЯ КОНСТРУКЦИЯ",
-                                    symptoms: "ОЩУЩЕНИЕ ПОЛНОТЫ В ГРУДНОЙ КЛЕТКЕ, ТЯЖЕСТЬ НА ГРУДИНЕ, РЕБРА ОЩУЩАЮТСЯ ОГРАНИЧЕННЫМИ, НЕНОРМАЛЬНОЕ СЕРДЦЕБИЕНИЕ",
-                                    tension: "РИГИДНОСТЬ В ГРУДНОМ ОТДЕЛЕ, ТЯЖЕСТЬ, ТРЕВОЖНОСТЬ",
-                                    anchoring: "БОЛЬ В СПИНЕ, БОЛЬ В ПОЗВОНОЧНИКЕ, БОЛЬ В ПЛЕЧЕ"
+                                    fullInfo: true,
+                                    symptom: "Ощущение полноты в грудной клетке, тяжесть на грудине, ребра ощущаются ограниченными, ненормальное сердцебиение и т.д.",
+                                    tension: "Ригидность в грудном отделе, тяжесть, тревожность, ощущения…",
+                                    anchoring: "Боль в спине, боль в позвоночнике, боль в плече, боль…",
+                                    visceral: ["Диспноэ", "Кашель", "Трахеит", "Бронхит"],
+                                    vascular: ["Аритмия", "Тахикардия", "Брадикардия", "Стенокардия"],
+                                    glandular: ["Тимит", "Перикардит", "Проблемы диафрагмы", "Сердцебиения"]
                                 },
-                                { name: "LU - ПОЯСНИЧНЫЙ", type: "level3", color: "#f97316" },
-                                { name: "PV - ТАЗОВЫЙ", type: "level3", color: "#f97316" }
+                                {
+                                    name: "LU - ПОЯСНИЧНЫЙ",
+                                    type: "level3",
+                                    color: "#f97316",
+                                    fullInfo: true,
+                                    symptom: "Ощущение вспучивания над пупком, изжога, гастрит, гастроптоз и т.д.",
+                                    tension: "Ощущения тяжести, вздутости, жжения",
+                                    anchoring: "Боль в области почек сзади",
+                                    visceral: ["Гастрит", "Эзофагит", "Рефлюкс", "Грыжа пищеводного отверстия диафрагмы"],
+                                    vascular: ["Почечная колика", "Ночной энурез", "Полиурия", "Гипертензия"],
+                                    glandular: ["Желчная колика", "Непереносимость глюкозы", "Болезни надпочечников"]
+                                },
+                                {
+                                    name: "PV - ТАЗОВЫЙ",
+                                    type: "level3",
+                                    color: "#f97316",
+                                    fullInfo: true,
+                                    symptom: "Ощущение полного мочевого пузыря, простреливающая боль в левой или правой подвздошной ямке, напряжение над пупком, и т.д.",
+                                    tension: "Ощущение опухшести под пупком, напряжение в промежности…",
+                                    anchoring: "Боль в крестце, копчике, бедре…",
+                                    visceral: ["Колит", "Запор", "Болезненный позыв на стул", "Пищевая непереносимость"],
+                                    vascular: ["Недержание", "Уретрит", "Цистит", "Застой мочи"],
+                                    glandular: ["Кисты яичников", "Дисменорея", "Простатит", "Боль в гонадах"]
+                                }
                             ]
                         },
                         {
                             name: "РЕЦЕПТОРНЫЙ АППАРАТ",
                             type: "receptorial",
                             color: "#a855f7",
-                            description: "РЕЦЕПТОРНАЯ ПОСЛЕДОВАТЕЛЬНОСТЬ - СЕНСОРНЫЕ ДИСФУНКЦИИ",
+                            description: "Рецепторная последовательность - сенсорные дисфункции",
                             children: [
-                                { name: "ФОТОРЕЦЕПТИВНАЯ", type: "receptorial", color: "#a855f7", description: "ЗРИТЕЛЬНАЯ СИСТЕМА" },
-                                { name: "ХЕМОРЕЦЕПТИВНАЯ", type: "receptorial", color: "#a855f7", description: "ХИМИЧЕСКАЯ ЧУВСТВИТЕЛЬНОСТЬ" },
-                                { name: "МЕХАНОРЕЦЕПТИВНАЯ", type: "receptorial", color: "#a855f7", description: "МЕХАНИЧЕСКАЯ ЧУВСТВИТЕЛЬНОСТЬ" }
+                                { name: "ФОТОРЕЦЕПЦИЯ", type: "receptorial", color: "#a855f7" },
+                                { name: "ХЕМОРЕЦЕПЦИЯ", type: "receptorial", color: "#a855f7" },
+                                { name: "МЕХАНОРЕЦЕПЦИЯ", type: "receptorial", color: "#a855f7" }
                             ]
                         },
                         {
                             name: "ВИСЦЕРАЛЬНАЯ ЦЕПОЧКА (SE VI)",
                             type: "visceral",
                             color: "#ef4444",
-                            description: "ВИСЦЕРАЛЬНАЯ ПОСЛЕДОВАТЕЛЬНОСТЬ - ВНУТРЕННИЕ ОРГАНЫ",
+                            description: "Висцеральная последовательность - внутренние органы",
                             children: [
-                                { 
-                                    name: "ДЫХАТЕЛЬНАЯ ARE", 
-                                    type: "visceral", 
-                                    color: "#ef4444", 
-                                    description: "РЕСПИРАТОРНАЯ СИСТЕМА",
-                                    symptoms: "ДИСПНОЭ, ЭМФИЗЕМА, БРОНХОЭКТАЗ, АСТМА, ПОСЛЕДСТВИЯ ПЛЕВРИТА ИЛИ БРОНХИТА"
+                                {
+                                    name: "ДЫХАТЕЛЬНАЯ ARE",
+                                    type: "visceral",
+                                    color: "#ef4444",
+                                    fullInfo: true,
+                                    symptoms: ["Диспноэ", "Эмфизема", "Бронхоэктаз", "Астма", "Последствия плеврита или бронхита"]
                                 },
-                                { 
-                                    name: "ПИЩЕВАРИТЕЛЬНАЯ ADI", 
-                                    type: "visceral", 
-                                    color: "#ef4444", 
-                                    description: "ПИЩЕВАРИТЕЛЬНАЯ СИСТЕМА",
-                                    symptoms: "СТОМАТИТ, ОТРЫЖКА, ПЛОХОЙ ЗАПАХ ИЗО РТА, ГРЫЖА ПИЩЕВОДНОГО ОТВЕРСТИЯ ДИАФРАГМЫ, ИЗЖОГА, ЭНТЕРИТ, ДИАРЕЯ, ЗАПОР, КОЛИТ"
+                                {
+                                    name: "ПИЩЕВАРИТЕЛЬНАЯ ADI",
+                                    type: "visceral",
+                                    color: "#ef4444",
+                                    fullInfo: true,
+                                    symptoms: ["Стоматит", "Отрыжка", "Плохой запах изо рта", "Грыжа пищеводного отверстия диафрагмы", "Изжога", "Энтерит", "Диарея", "Запор", "Колит"]
                                 }
                             ]
                         },
@@ -337,37 +321,43 @@
                             name: "ЖЕЛЕЗИСТАЯ ЦЕПОЧКА (SE GL)",
                             type: "glandular",
                             color: "#eab308",
-                            description: "ЖЕЛЕЗИСТАЯ ПОСЛЕДОВАТЕЛЬНОСТЬ - ЭНДОКРИННАЯ СИСТЕМА",
+                            description: "Железистая последовательность - эндокринная система",
                             children: [
-                                { 
-                                    name: "ЭНДОКРИННАЯ AEN", 
-                                    type: "glandular", 
-                                    color: "#eab308", 
-                                    description: "ЭНДОКРИННАЯ СИСТЕМА",
-                                    symptoms: "ГИПЕРТИРЕОЗ, ГИПОТИРЕОЗ, ГИПЕРПАРАТИРЕОЗ, ДИАБЕТ, БЕСПЛОДИЕ, ОЛИГОСПЕРМИЯ"
+                                {
+                                    name: "ЭНДОКРИННАЯ AEN",
+                                    type: "glandular",
+                                    color: "#eab308",
+                                    fullInfo: true,
+                                    symptoms: ["Гипертиреоз", "Гипотиреоз", "Гиперпаратиреоз", "Диабет", "Бесплодие", "Олигоспермия"]
                                 },
-                                { name: "КРОВЕТВОРНАЯ AHE", type: "glandular", color: "#eab308", description: "ГЕМОПОЭТИЧЕСКАЯ СИСТЕМА" }
+                                {
+                                    name: "КРОВЕТВОРНАЯ AHE",
+                                    type: "glandular",
+                                    color: "#eab308",
+                                    fullInfo: true,
+                                    symptoms: ["Анемия", "Лейкопения", "Лейкоцитоз", "Эритропения", "Миелофиброз"]
+                                }
                             ]
                         },
                         {
                             name: "СОСУДИСТАЯ ЦЕПОЧКА (SE VA)",
                             type: "vascular",
                             color: "#22c55e",
-                            description: "СОСУДИСТАЯ ПОСЛЕДОВАТЕЛЬНОСТЬ - КРОВООБРАЩЕНИЕ И МОЧЕВЫДЕЛЕНИЕ",
+                            description: "Сосудистая последовательность - кровообращение и мочевыделение",
                             children: [
-                                { 
-                                    name: "ЦИРКУЛЯТОРНЫЙ ACI", 
-                                    type: "vascular", 
-                                    color: "#22c55e", 
-                                    description: "КРОВООБРАЩЕНИЕ",
-                                    symptoms: "АРИТМИЯ, ТАХИКАРДИЯ, БРАДИКАРДИЯ, СТЕНОКАРДИЯ, ГИПЕРТОНИЯ, ОБЛИТЕРИРУЮЩИЙ АРТЕРИИТ, ВЕНОЗНЫЙ ЗАСТОЙ"
+                                {
+                                    name: "ЦИРКУЛЯТОРНЫЙ ACI",
+                                    type: "vascular",
+                                    color: "#22c55e",
+                                    fullInfo: true,
+                                    symptoms: ["Аритмия", "Тахикардия", "Брадикардия", "Стенокардия", "Гипертония", "Облитерирующий артериит", "Венозный застой"]
                                 },
-                                { 
-                                    name: "МОЧЕВЫДЕЛИТЕЛЬНЫЙ AUN", 
-                                    type: "vascular", 
-                                    color: "#22c55e", 
-                                    description: "МОЧЕВЫДЕЛИТЕЛЬНАЯ СИСТЕМА",
-                                    symptoms: "ПОЧЕЧНЫЕ КАМНИ, ЗАДЕРЖКА МОЧЕИСПУСКАНИЯ, ЦИСТИТ, УРЕТРИТ, ЭНУРЕЗ, НЕДЕРЖАНИЕ МОЧИ"
+                                {
+                                    name: "МОЧЕВЫДЕЛИТЕЛЬНЫЙ AUN",
+                                    type: "vascular",
+                                    color: "#22c55e",
+                                    fullInfo: true,
+                                    symptoms: ["Почечные камни", "Задержка мочеиспускания", "Цистит", "Уретрит", "Энурез", "Недержание мочи"]
                                 }
                             ]
                         }
@@ -378,43 +368,43 @@
                     type: "level4",
                     level: "IV",
                     color: "#10b981",
-                    description: "СИСТЕМНЫЙ УРОВЕНЬ IV - ПОВЕРХНОСТНАЯ ФАСЦИЯ И СИСТЕМНЫЕ ФУНКЦИИ",
+                    description: "Системный уровень IV - поверхностная фасция и системные функции",
                     children: [
                         {
-                            name: "STC - КОЖНАЯ СИСТЕМА (КОЖНАЯ, ТЕРМОРЕГУЛЯЦИОННАЯ)",
+                            name: "КОЖНАЯ СИСТЕМА (STC)",
                             type: "level4",
                             color: "#10b981",
-                            description: "КОЖНАЯ И ТЕРМОРЕГУЛЯТОРНАЯ СИСТЕМЫ",
+                            description: "Кожная и терморегуляторная системы",
                             children: [
                                 { name: "КОЖНАЯ", type: "level4", color: "#10b981" },
                                 { name: "ТЕРМОРЕГУЛЯЦИОННАЯ", type: "level4", color: "#10b981" }
                             ]
                         },
                         {
-                            name: "SLI - ЛИМФАТИЧЕСКАЯ СИСТЕМА (ЛИМФАТИЧЕСКАЯ, ИММУННАЯ)",
+                            name: "ЛИМФАТИЧЕСКАЯ СИСТЕМА (SLI)",
                             type: "level4",
                             color: "#10b981",
-                            description: "ЛИМФАТИЧЕСКАЯ И ИММУННАЯ СИСТЕМЫ",
+                            description: "Лимфатическая и иммунная системы",
                             children: [
                                 { name: "ЛИМФАТИЧЕСКАЯ", type: "level4", color: "#10b981" },
                                 { name: "ИММУННАЯ", type: "level4", color: "#10b981" }
                             ]
                         },
                         {
-                            name: "SAM - ЖИРОВАЯ СИСТЕМА (ЖИРОВАЯ, МЕТАБОЛИЧЕСКАЯ)",
+                            name: "ЖИРОВАЯ СИСТЕМА (SAM)",
                             type: "level4",
                             color: "#10b981",
-                            description: "ЖИРОВАЯ И МЕТАБОЛИЧЕСКАЯ СИСТЕМЫ",
+                            description: "Жировая и метаболическая системы",
                             children: [
                                 { name: "ЖИРОВАЯ", type: "level4", color: "#10b981" },
                                 { name: "МЕТАБОЛИЧЕСКАЯ", type: "level4", color: "#10b981" }
                             ]
                         },
                         {
-                            name: "SPS - ПСИХОГЕННАЯ СИСТЕМА (НЕЙРОГЕННАЯ, ПСИХОГЕННАЯ)",
+                            name: "ПСИХОГЕННАЯ СИСТЕМА (SPS)",
                             type: "level4",
                             color: "#10b981",
-                            description: "НЕРВНАЯ И ПСИХИЧЕСКАЯ СИСТЕМЫ",
+                            description: "Нервная и психическая системы",
                             children: [
                                 { name: "НЕЙРОГЕННАЯ", type: "level4", color: "#10b981" },
                                 { name: "ПСИХОГЕННАЯ", type: "level4", color: "#10b981" }
@@ -435,7 +425,7 @@
         
         const colors = {
             root: "#ffffff",
-            level1: "#22d3ee",
+            level1: "#06b6d4",
             level3: "#f97316",
             level4: "#10b981",
             receptorial: "#a855f7",
@@ -456,7 +446,7 @@
                 .append("g");
             
             g = svg.append("g")
-                .attr("transform", `translate(${width/6},${height/2})`);
+                .attr("transform", `translate(${width/8},${height/2})`);
             
             tree = d3.tree().nodeSize([60, 250]);
             
@@ -525,7 +515,7 @@
                 .attr("x", d => d.children || d._children ? -20 : 20)
                 .attr("text-anchor", d => d.children || d._children ? "end" : "start")
                 .text(d => d.data.name)
-                .style("fill", d => colors[d.data.type] || "#fff")
+                .style("fill", d => colors[d.data.type] || "#e5e5e5")
                 .style("opacity", 0);
             
             const nodeUpdate = node.merge(nodeEnter);
@@ -535,10 +525,13 @@
                 .attr("transform", d => `translate(${d.y},${d.x})`);
             
             nodeUpdate.select('circle')
-                .attr('r', d => d.depth === 0 ? 10 : d.data.children || d.data._children ? 7 : 5)
+                .attr('r', d => {
+                    if(d.depth === 0) return 14;
+                    if(d.data.fullInfo) return 10;
+                    return d.data.children || d.data._children ? 8 : 5;
+                })
                 .style("fill", d => d._children ? colors[d.data.type] || "#fff" : "#0a0a0a")
-                .style("stroke", d => colors[d.data.type] || "#fff")
-                .attr('cursor', 'pointer');
+                .style("stroke", d => colors[d.data.type] || "#fff");
             
             nodeUpdate.select('text')
                 .style("opacity", 1);
@@ -604,79 +597,135 @@
 
         function showTooltip(event, d) {
             const tooltip = d3.select("#tooltip");
-            tooltip.transition().duration(200).style("opacity", .95);
+            const data = d.data;
             
-            let content = `<strong style="color: ${colors[d.data.type] || '#fff'}; font-size: 13px; text-transform: uppercase;">${d.data.name}</strong>`;
+            let content = `<strong style="color: ${colors[data.type] || '#fff'}">${data.name}</strong>`;
             
-            if(d.data.level) {
-                content += `<br><span style="color: #71717a; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">Уровень ${d.data.level}</span>`;
+            if(data.level) {
+                content += `<br><span style="color: #71717a; font-size: 11px; text-transform: uppercase;">Уровень ${data.level}</span>`;
             }
             
-            if(d.data.description) {
-                content += `<br><span style="color: #a1a1aa; margin-top: 8px; display: block; font-size: 11px; line-height: 1.5;">${d.data.description}</span>`;
+            if(data.description) {
+                content += `<br><span style="color: #a1a1aa; margin-top: 6px; display: block; line-height: 1.5;">${data.description}</span>`;
+            }
+            
+            if(data.symptom) {
+                content += `<br><span style="color: #f97316; margin-top: 8px; display: block; font-weight: 600;">СИМПТОМ:</span>`;
+                content += `<span style="color: #d4d4d8;">${data.symptom}</span>`;
+            }
+            
+            if(data.symptoms) {
+                content += `<br><span style="color: #f97316; margin-top: 8px; display: block; font-weight: 600;">СИМПТОМЫ:</span>`;
+                content += `<ul class="symptom-list" style="color: #d4d4d8;">`;
+                data.symptoms.forEach(s => {
+                    content += `<li>${s}</li>`;
+                });
+                content += `</ul>`;
             }
             
             tooltip.html(content)
                 .style("left", (event.pageX + 20) + "px")
                 .style("top", (event.pageY - 20) + "px");
+            
+            tooltip.transition().duration(200).style("opacity", 1);
         }
 
         function hideTooltip() {
-            d3.select("#tooltip").transition().duration(500).style("opacity", 0);
+            d3.select("#tooltip").transition().duration(300).style("opacity", 0);
         }
 
         function showInfo(data) {
             const panel = document.getElementById('infoPanel');
             const title = document.getElementById('infoTitle');
             const level = document.getElementById('infoLevel');
-            const desc = document.getElementById('infoDesc');
+            const content = document.getElementById('infoContent');
             
             title.textContent = data.name;
             title.style.color = colors[data.type] || '#fff';
             
+            let html = '';
+            
             if(data.level) {
-                level.innerHTML = `<span class="level-badge" style="background: ${colors[data.type]}15; color: ${colors[data.type]}; border: 1px solid ${colors[data.type]}30">УРОВЕНЬ ${data.level}</span>`;
+                level.innerHTML = `<span class="inline-block px-3 py-1 rounded text-xs font-bold tracking-wider" style="background: ${colors[data.type]}20; color: ${colors[data.type]}; border: 1px solid ${colors[data.type]}40">УРОВЕНЬ ${data.level}</span>`;
             } else {
                 level.innerHTML = '';
             }
             
-            let descHtml = '';
             if(data.description) {
-                descHtml += `<p class="text-zinc-300 font-medium mb-4">${data.description}</p>`;
+                html += `<div class="p-4 rounded-lg bg-zinc-900/50 border border-zinc-800"><p class="text-zinc-300 leading-relaxed">${data.description}</p></div>`;
+            }
+            
+            if(data.symptom) {
+                html += `
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-lg bg-zinc-900/50 border border-zinc-800">
+                            <h4 class="text-orange-400 font-bold text-xs uppercase tracking-wider mb-2">Симптом</h4>
+                            <p class="text-zinc-300 text-sm leading-relaxed">${data.symptom}</p>
+                        </div>
+                        
+                        <div class="p-4 rounded-lg bg-zinc-900/50 border border-zinc-800">
+                            <h4 class="text-orange-400 font-bold text-xs uppercase tracking-wider mb-2">Натяжная Конструкция</h4>
+                            <p class="text-zinc-300 text-sm leading-relaxed">${data.tension}</p>
+                        </div>
+                        
+                        <div class="p-4 rounded-lg bg-zinc-900/50 border border-zinc-800">
+                            <h4 class="text-orange-400 font-bold text-xs uppercase tracking-wider mb-2">Якорения</h4>
+                            <p class="text-zinc-300 text-sm leading-relaxed">${data.anchoring}</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 gap-3">
+                            ${data.visceral ? `
+                                <div class="p-3 rounded bg-red-950/30 border border-red-900/30">
+                                    <h4 class="text-red-400 font-bold text-xs uppercase tracking-wider mb-2">Висцеральная</h4>
+                                    <ul class="text-xs text-zinc-400 space-y-1">
+                                        ${data.visceral.map(v => `<li>• ${v}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            ` : ''}
+                            
+                            ${data.vascular ? `
+                                <div class="p-3 rounded bg-green-950/30 border border-green-900/30">
+                                    <h4 class="text-green-400 font-bold text-xs uppercase tracking-wider mb-2">Сосудистая</h4>
+                                    <ul class="text-xs text-zinc-400 space-y-1">
+                                        ${data.vascular.map(v => `<li>• ${v}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            ` : ''}
+                            
+                            ${data.glandular ? `
+                                <div class="p-3 rounded bg-yellow-950/30 border border-yellow-900/30">
+                                    <h4 class="text-yellow-400 font-bold text-xs uppercase tracking-wider mb-2">Железистая</h4>
+                                    <ul class="text-xs text-zinc-400 space-y-1">
+                                        ${data.glandular.map(v => `<li>• ${v}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
             }
             
             if(data.symptoms) {
-                descHtml += `
-                    <div class="symptom-box mb-3" style="border-color: ${colors[data.type]}">
-                        <div class="text-[10px] font-black text-zinc-500 uppercase tracking-wider mb-1">Симптомы</div>
-                        <div class="text-zinc-300 text-xs leading-relaxed">${data.symptoms}</div>
+                html += `
+                    <div class="p-4 rounded-lg bg-zinc-900/50 border border-zinc-800">
+                        <h4 class="text-orange-400 font-bold text-xs uppercase tracking-wider mb-3">Клинические Проявления</h4>
+                        <ul class="space-y-2">
+                            ${data.symptoms.map(s => `
+                                <li class="flex items-start gap-2 text-sm text-zinc-300">
+                                    <span class="text-zinc-600 mt-1">›</span>
+                                    <span>${s}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
                     </div>
                 `;
             }
             
-            if(data.tension) {
-                descHtml += `
-                    <div class="symptom-box mb-3" style="border-color: ${colors[data.type]}80">
-                        <div class="text-[10px] font-black text-zinc-500 uppercase tracking-wider mb-1">Натяжная Конструкция</div>
-                        <div class="text-zinc-400 text-xs leading-relaxed">${data.tension}</div>
-                    </div>
-                `;
+            if(!data.symptom && !data.symptoms && !data.description) {
+                html = `<div class="p-4 rounded-lg bg-zinc-900/50 border border-zinc-800"><p class="text-zinc-500 text-sm">Нажмите на узел для развертывания структуры или наведите для подсказки</p></div>`;
             }
             
-            if(data.anchoring) {
-                descHtml += `
-                    <div class="symptom-box" style="border-color: ${colors[data.type]}60">
-                        <div class="text-[10px] font-black text-zinc-500 uppercase tracking-wider mb-1">Якорения / Боль</div>
-                        <div class="text-zinc-400 text-xs leading-relaxed">${data.anchoring}</div>
-                    </div>
-                `;
-            }
-            
-            if(!descHtml) {
-                descHtml = '<p class="text-zinc-500 italic">Нажмите на узел для развертывания структуры</p>';
-            }
-            
-            desc.innerHTML = descHtml;
+            content.innerHTML = html;
             panel.style.transform = 'translateX(0)';
         }
 
@@ -697,21 +746,9 @@
         function resetView() {
             svg.transition().duration(750).call(
                 d3.zoom().transform,
-                d3.zoomIdentity.translate(width/6, height/2).scale(1)
+                d3.zoomIdentity.translate(width/8, height/2).scale(1)
             );
-            g.attr("transform", `translate(${width/6},${height/2})`);
-        }
-
-        function highlightLevel(levelType) {
-            d3.selectAll('.link').style("stroke-opacity", 0.1);
-            d3.selectAll('.node text').style("opacity", 0.2);
-            d3.selectAll('.node circle').style("opacity", 0.2);
-            
-            setTimeout(() => {
-                d3.selectAll('.link').style("stroke-opacity", 0.4);
-                d3.selectAll('.node text').style("opacity", 1);
-                d3.selectAll('.node circle').style("opacity", 1);
-            }, 1500);
+            g.attr("transform", `translate(${width/8},${height/2})`);
         }
 
         window.addEventListener('load', init);
